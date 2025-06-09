@@ -1,0 +1,53 @@
+version: "3.9"
+
+services:
+  backend:
+    build: ./backend
+    container_name: star-crawler-backend
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+      - rabbitmq
+    volumes:
+      - ./backend:/app
+    command: npm run start:prod
+
+  db: 
+    image: mariadb:11
+    container_name: star-crawler-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: starcrawler
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+  worker:
+    build: ./worker
+    container_name: starcrawler_worker
+    command: npm run start:worker
+    environment:
+      - DATABASE_URL=mysql://root:root@db:3306/starcrawler
+      - RABBITMQ_URL=amqp://rabbitmq:5672
+    depends_on:
+      - db
+      - rabbitmq
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: star-crawler-rabbitmq
+    restart: unless-stopped
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+volumes:
+  db_data:
