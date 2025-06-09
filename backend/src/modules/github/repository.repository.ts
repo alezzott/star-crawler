@@ -10,12 +10,20 @@ export class RepositoryRepository {
     private readonly repo: TypeOrmRepository<Repository>,
   ) {}
 
-  findAll() {
-    return this.repo.find();
+  async findAll(where: Partial<Repository> = {}) {
+    return this.repo.find({ where });
   }
 
   createAndSave(data: Partial<Repository>) {
     const entity = this.repo.create(data);
     return this.repo.save(entity);
+  }
+
+  async update(id: number, data: Partial<Repository>) {
+    return this.repo.update(id, data);
+  }
+
+  async findOneBy(where: Partial<Repository>) {
+    return this.repo.findOneBy(where);
   }
 }
