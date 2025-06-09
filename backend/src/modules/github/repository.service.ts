@@ -1,14 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from './repository.entity';
 import { RepositoryRepository } from './repository.repository';
 import { UpdateRepositoryDto } from './dtos/update-repository.dto';
+
 @Injectable()
 export class RepositoryService {
-  constructor(
-    @InjectRepository(Repository)
-    private readonly repositoryRepo: RepositoryRepository,
-  ) {}
+  constructor(private readonly repositoryRepo: RepositoryRepository) {}
 
   async findAll(filters?: {
     name?: string;
