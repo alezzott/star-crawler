@@ -1,5 +1,6 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { Repository } from 'src/modules/github/repository.entity';
+import { ImportJob } from 'src/modules/github/entity/import.entity';
+import { Repository } from 'src/modules/github/entity/repository.entity';
 
 export const typeOrmConfig: TypeOrmModuleOptions = {
   type: 'mariadb',
@@ -8,6 +9,6 @@ export const typeOrmConfig: TypeOrmModuleOptions = {
   username: process.env.DB_USER || 'user',
   password: process.env.DB_PASSWORD || 'password',
   database: process.env.DB_NAME || 'starcrawler',
-  entities: [Repository],
+  entities: [Repository, ImportJob],
   synchronize: true,
 };
