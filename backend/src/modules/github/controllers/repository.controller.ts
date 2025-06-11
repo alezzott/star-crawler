@@ -62,19 +62,21 @@ export class RepositoryController {
   @Get('export/csv')
   async exportCsv(
     @Res() res: Response,
-    @Query('name') name?: string,
     @Query('owner') owner?: string,
-    @Query('stars') stars?: number,
   ): Promise<void> {
-    const csv = await this.repositoryService.exportToCsv({
-      name,
-      owner,
-      stars,
-    });
+    if (!owner) {
+      res
+        .status(400)
+        .send('Parâmetro "owner" é obrigatório para exportação do GitHub.');
+      return;
+    }
+    const repositories = await this.githubApiService.getUserRepositories(owner);
+    const csv = await this.repositoryService.exportToCsv(repositories);
+
     res.setHeader('Content-Type', 'text/csv');
     res.setHeader(
       'Content-Disposition',
-      'attachment; filename="repositories.csv"',
+      `attachment; filename="repositories.csv"`,
     );
     res.send(csv);
   }

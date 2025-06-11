@@ -47,16 +47,16 @@ export class RepositoryService {
     await this.repositoryRepo.saveMany(repos);
   }
 
-  async exportToCsv(filters?: {
-    name?: string;
-    owner?: string;
-    stars?: number;
-  }): Promise<string> {
-    this.logger.log(
-      `[exportToCsv] Exportando repositórios para CSV com filtros: ${JSON.stringify(filters)}`,
-    );
-    const repos = await this.findAll(filters);
-    const data = repos.map((repo) => ({
+  exportToCsv(
+    repositories: Array<{
+      name: string;
+      owner: string;
+      stars: number;
+      url: string;
+    }>,
+  ): string {
+    this.logger.log(`[exportToCsv] Exportando repositórios recebidos para CSV`);
+    const data = repositories.map((repo) => ({
       name: repo.name,
       owner: repo.owner,
       stars: repo.stars,
