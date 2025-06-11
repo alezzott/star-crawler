@@ -9,6 +9,7 @@ import {
   UseInterceptors,
   UploadedFile,
   Logger,
+  NotFoundException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Repository } from '../entity/repository.entity';
@@ -17,6 +18,9 @@ import { Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { RabbitMQService } from '../services/rabbitmq.service';
 import { RepositoryService } from '../services/repository.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { ImportJob } from '../entity/import.entity';
+import { Repository as TypeOrmRepository } from 'typeorm';
 
 @Controller('repositories')
 export class RepositoryController {
@@ -26,6 +30,8 @@ export class RepositoryController {
     private readonly repositoryService: RepositoryService,
     private readonly githubApiService: GithubApiService,
     private readonly rabbitMQService: RabbitMQService,
+    @InjectRepository(ImportJob)
+    private readonly importJobRepo: TypeOrmRepository<ImportJob>,
   ) {}
 
   @Get()
@@ -76,6 +82,30 @@ export class RepositoryController {
   @Get('/github/:username')
   async getGithubRepos(@Param('username') username: string) {
     return this.githubApiService.getUserRepositories(username);
+  }
+
+  @Get('import/status/:jobId')
+  async getImportStatus(@Param('jobId') jobId: string) {
+    try {
+      const job = await this.importJobRepo.findOneBy({ jobId });
+      if (!job) {
+        this.logger.warn(`[IMPORT STATUS] Job não encontrado: ${jobId}`);
+        throw new NotFoundException(`Job ${jobId} não encontrado`);
+      }
+      return {
+        jobId: job.jobId,
+        status: job.status,
+        errorMessage: job.errorMessage,
+        createdAt: job.createdAt,
+        updatedAt: job.updatedAt,
+      };
+    } catch (error) {
+      this.logger.error(
+        `[IMPORT STATUS] Erro ao consultar status do job ${jobId}: ${error instanceof Error ? error.message : error}`,
+        error instanceof Error ? error.stack : undefined,
+      );
+      throw error;
+    }
   }
 
   @Post('import/csv')
