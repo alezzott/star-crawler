@@ -5,6 +5,7 @@ import {
   Transport,
 } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
+import { getRabbitMQConfig } from 'src/database/rabbitmq.config';
 
 @Injectable()
 export class RabbitMQService implements OnModuleInit {
@@ -13,11 +14,12 @@ export class RabbitMQService implements OnModuleInit {
 
   onModuleInit() {
     this.logger.log('Inicializando RabbitMQ ClientProxy...');
+    const { url, queue } = getRabbitMQConfig();
     this.client = ClientProxyFactory.create({
       transport: Transport.RMQ,
       options: {
-        urls: ['amqp://guest:guest@rabbitmq:5672'],
-        queue: 'star-crawler-queue',
+        urls: [url],
+        queue,
         queueOptions: { durable: true },
       },
     });
