@@ -1,5 +1,5 @@
 services:
-  starcrawler-backend:
+  backend:
     build: ./backend
     container_name: star-crawler-backend
     restart: unless-stopped
@@ -27,17 +27,6 @@ services:
       - "3306:3306"
     volumes:
       - db_data:/var/lib/mysql
-
-  # worker:
-  #   build: ./worker
-  #   container_name: starcrawler_worker
-  #   command: npm run start:worker
-  #   environment:
-  #     - DATABASE_URL=mysql://root:root@db:3306/starcrawler
-  #     - RABBITMQ_URL=amqp://rabbitmq:5672
-  #   depends_on:
-  #     - db
-  #     - rabbitmq
 
   rabbitmq:
     image: rabbitmq:3-management
