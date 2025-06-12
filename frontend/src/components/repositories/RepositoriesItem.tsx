@@ -55,6 +55,12 @@ export function RepositoriesItem() {
               Exportar CSV
             </Button>
           </div>
+          {username === '' && (
+            <span className="mt-10 text-sm text-gray-600">
+              Informe o nome de usuário do GitHub para buscar os repositórios
+              públicos.
+            </span>
+          )}
         </div>
         {isLoading && (
           <div className="mt-6 flex justify-center">

@@ -28,7 +28,7 @@ export function TablePagination({
   onPageChange,
 }: TablePaginationProps) {
   return (
-    <section className="flex flex-row items-center gap-8">
+    <section className="flex flex-row items-center justify-between gap-8 pt-5">
       <article>
         <h1 className="text-sm text-nowrap text-[#252525]">
           Página <b>{pageIndex + 1}</b> de <b>{pageCount}</b>
