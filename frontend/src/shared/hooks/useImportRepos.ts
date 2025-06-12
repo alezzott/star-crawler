@@ -17,8 +17,6 @@ function buildQueryParams(page: number, filters: Filters): URLSearchParams {
 }
 
 async function fetchImportedRepos(page: number, filters: Filters) {
-  console.log('Refetching repos', page, filters)
-
   const params = buildQueryParams(page, filters)
   const { data } = await axios.get(
     `${process.env.NEXT_PUBLIC_API_URL}/repositories?${params.toString()}`
