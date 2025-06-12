@@ -71,7 +71,7 @@ export class RepositoryController {
       return;
     }
     const repositories = await this.githubApiService.getUserRepositories(owner);
-    const csv = await this.repositoryService.exportToCsv(repositories);
+    const csv = this.repositoryService.exportToCsv(repositories);
 
     res.setHeader('Content-Type', 'text/csv');
     res.setHeader(

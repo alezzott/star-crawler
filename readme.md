@@ -50,30 +50,6 @@ Backend do projeto **Star Crawler**, responsável por pesquisar, importar, expor
 - `GET /repositories/import/status/:jobId`  
   Consulta o status do processamento de importação de um arquivo CSV (`processing`, `done`, `error`).
 
-## Variáveis de Ambiente
-
-O projeto utiliza variáveis de ambiente para configuração do banco de dados, RabbitMQ e outros serviços.
-
-1. **Crie o arquivo `.env` na raiz do projeto** a partir do exemplo:
-   ```sh
-   cp .env.example .env
-   ```
-2. **Edite o arquivo `.env` conforme necessário.**  
-   Exemplo de variáveis disponíveis:
-   ```
-   DB_HOST=db
-   DB_PORT=3306
-   DB_USER=user
-   DB_PASSWORD=password
-   DB_NAME=starcrawler
-
-   RABBITMQ_USER=guest
-   RABBITMQ_PASS=guest
-   RABBITMQ_HOST=rabbitmq
-   RABBITMQ_PORT=5672
-   RABBITMQ_QUEUE=star-crawler-queue
-   ```
-
 ## Como executar com Docker
 
 1. **Clone o repositório e acesse a pasta do projeto:**
@@ -82,24 +58,47 @@ O projeto utiliza variáveis de ambiente para configuração do banco de dados, 
    cd star-crawler
    ```
 
-2. **Configure as variáveis de ambiente:**  
-   ```sh
-   cp .env.example .env
-   ```
-   Edite o arquivo `.env` conforme necessário.
+2. **Configure as variáveis de ambiente para cada serviço:**
 
-3. **Suba os containers com Docker Compose:**
+   - **Backend:**
+     ```sh
+     cp backend/.env.example backend/.env
+     ```
+     Edite o arquivo `backend/.env` conforme necessário.
+
+   - **Frontend:**
+     ```sh
+     cp frontend/.env.example frontend/.env
+     ```
+     Edite o arquivo `frontend/.env` conforme necessário.
+
+3. **Para ambiente de desenvolvimento:**  
+   Use o arquivo padrão, que já está configurado para hot reload e volumes:
    ```sh
    docker-compose up --build
    ```
 
+4. **Para ambiente de produção:**  
+   Use o arquivo `docker-compose.prod.yml` (caso exista) para builds otimizados e comandos de produção:
+   ```sh
+   docker-compose -f docker-compose.prod.yml up --build -d
+   ```
+
    Isso irá subir:
    - Backend (NestJS)
+   - Frontend (Next.js)
    - Banco de dados (MariaDB)
    - Fila de mensagens (RabbitMQ)
 
-4. **Acesse a API:**  
-   O backend estará disponível em [http://localhost:3000](http://localhost:3000).
+5. **Acesse a aplicação:**
+   - **Frontend:** [http://localhost:3001](http://localhost:3001)
+   - **Backend/API:** [http://localhost:3000](http://localhost:3000)
+
+---
+
+**Importante:**  
+Não existe mais `.env` na raiz do projeto.  
+Cada serviço (backend e frontend) deve ter seu próprio arquivo `.env` na respectiva pasta.
 
 ## Estrutura dos Containers
 
