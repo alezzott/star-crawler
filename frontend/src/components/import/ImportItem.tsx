@@ -28,6 +28,7 @@ import { useDebounce } from 'use-debounce'
 import { Input } from '../ui/input'
 import { TableSortableHeader } from './table/TableSortableHeader'
 import { LoaderSpinning } from '../ui/loader-spinning'
+import { useQueryClient } from '@tanstack/react-query'
 
 export function ImportItem() {
   const [jobId, setJobId] = useState<string | null>(null)
@@ -39,6 +40,7 @@ export function ImportItem() {
   const [sorting, setSorting] = useState<SortingState>([])
 
   const [debouncedSearch] = useDebounce(searchInput, 500)
+  const queryClient = useQueryClient()
 
   const prevStatus = useRef<string>(null)
   const importCsv = useImportCsv()
@@ -47,7 +49,7 @@ export function ImportItem() {
     data: importData,
     isLoading: isLoadingImport,
     error: isImportError,
-  } = useImportedRepos(page, undefined, filters)
+  } = useImportedRepos(page, filters)
 
   const columns = useMemo<ColumnDef<any>[]>(
     () => [
@@ -117,14 +119,15 @@ export function ImportItem() {
     const file = fileInputRef.current?.files?.[0]
     if (!file) return
     importCsv.mutate(file, {
-      onSuccess: (data) => setJobId(data.jobId),
+      onSuccess: (data) => {
+        setJobId(data.jobId)
+      },
       onError: () => toast.error('Erro ao importar CSV'),
     })
   }
 
   useEffect(() => {
     if (!jobStatus?.status) return
-
     if (jobStatus.status !== prevStatus.current) {
       switch (jobStatus.status) {
         case 'pending':
@@ -142,6 +145,16 @@ export function ImportItem() {
           break
       }
       prevStatus.current = jobStatus.status
+    }
+  }, [jobStatus?.status])
+
+  useEffect(() => {
+    if (jobStatus?.status === 'done') {
+      queryClient.invalidateQueries({
+        queryKey: ['imported-repos'],
+        exact: false,
+        refetchType: 'active',
+      })
     }
   }, [jobStatus?.status])
 
