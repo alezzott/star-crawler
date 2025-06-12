@@ -1,5 +1,5 @@
 import { Repository as TypeOrmRepository } from 'typeorm';
-import { Repository } from './repository.entity';
+import { Repository } from './entity/repository.entity';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -25,5 +25,17 @@ export class RepositoryRepository {
 
   async findOneBy(where: Partial<Repository>) {
     return this.repo.findOneBy(where);
+  }
+
+  async saveMany(entities: Partial<Repository>[]) {
+    return this.repo.save(entities);
+  }
+
+  async findAndCount(options: {
+    where?: Partial<Repository>;
+    skip?: number;
+    take?: number;
+  }) {
+    return this.repo.findAndCount(options);
   }
 }

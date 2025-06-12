@@ -1,6 +1,6 @@
-import { IsString, IsInt, IsUrl } from 'class-validator';
+import { IsString, IsInt, IsUrl, IsOptional } from 'class-validator';
 
-export class CreateRepositoryDto {
+export class ImportRepositoryDto {
   @IsString()
   name: string;
 
@@ -8,6 +8,7 @@ export class CreateRepositoryDto {
   owner: string;
 
   @IsInt()
+  @IsOptional()
   stars: number;
 
   @IsUrl()
