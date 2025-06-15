@@ -1,0 +1,7 @@
+{
+    "name": "Star Crawler Dev",
+    "service": "frontend",
+    "workspaceFolder": "/app",
+    "dockerComposeFile": "../docker-compose.yml",
+    "shutdownAction": "stopCompose"
+  }
